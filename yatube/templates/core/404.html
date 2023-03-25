@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Yatube - 404 Page Not Found{% endblock %}
+{% block content %}
+  <h1>Oops!</h1>
+  <p>Уважаемый/ая - страницы {{ path }} не существует!</p>
+  <a href="{% url 'posts:index' %}">Соизвольте перейти на главную</a>
+{% endblock %}

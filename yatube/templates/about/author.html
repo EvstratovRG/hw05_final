@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ just_title }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="padding-left: 150px">
+	<h1>Привет, я автор проекта</h1>
+		<div class="container">
+			<img src="{% static 'img/panda.jpg'%}" alt="Автор" width="300" height="300">
+			<div class="bio">
+				<p>Меня зовут Евстратов Роман Геннадьевич, мне 28 лет, и я Python разработчик. Это мой первый серьезный проект в программировании. Надеюсь, моё "творение" придет Вам по душе, спасибо!</p>
+		<p>По вопросам сотрудничества пишите agentOO8@yandex.ru </p>
+				<div class="social-links">
+					<a href="https://t.me/"><img src="{% static 'img/Telegram.png'%}" alt=width="50" height="50"></a>
+					<a href="https://wa.me/79097620071"><img src="{% static 'img/whatsapp.png'%}" alt=width="65" height="65"></a>
+					<a href="https://www.linkedin.com/in/roman-evstratov-940778258/"><img src="{% static 'img/linkedin.png'%}" alt=width="50" height="50"></a>
+					<a href="https://hh.ru/resume/95053469ff0bb1de610039ed1f304e49547637"><img src="{% static 'img/hh.png' %}" alt=width="50" height="50"></a>
+					<a href="https://github.com/EvstratovRG/"><img src="{% static 'img/github.png' %}" alt=width="50" height="50"></a>
+					<a href="https://www.codewars.com/users/Evstratov95/"><img src="{% static 'img/codewars.png' %}" alt=width="50" height="50"></a>
+</div>
+
+{% endblock %}

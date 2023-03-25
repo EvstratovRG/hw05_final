@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %} {{ group.title }}{% endblock %}
+{% block content %}
+
+<div class="container">
+  <h1>{{ group.title }}</h1>
+  <p>{{ group.description }}</p>
+    {% for post in page_obj %}
+      {% include 'posts/includes/post_in_page_obj.html' with show_author_link=True %}
+    {% endfor %}
+    {% include 'posts/includes/paginator.html' %}
+</div>
+
+{% endblock %}
+
