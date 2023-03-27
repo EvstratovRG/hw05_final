@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
+# from django.core.cache import cache
 from django.conf import settings
 
 from .models import Post, Group, User
@@ -9,11 +9,11 @@ from .forms import PostForm, CommentForm
 from yatube.utils import paginate_posts
 
 
-# @cache_page(settings.CACHE_TIME_IN_SEC)
+@cache_page(settings.CACHE_TIME_IN_SEC, key_prefix='index_page')
 def index(request):
     '''Главная страница'''
     template = 'posts/index.html'
-    posts = cache.get('index_page')
+    # posts = cache.get('index_page')
     posts = Post.objects.all()
     # if not posts:
     #     posts = Post.objects.all()

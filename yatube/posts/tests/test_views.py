@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase
@@ -35,6 +37,7 @@ class PaginatorViewsTest(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        cache.clear()
 
     def test_first_page_posts(self):
         paginate_pages = [
@@ -81,6 +84,7 @@ class PostViewsTests(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        cache.clear()
 
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
@@ -149,12 +153,34 @@ class PostViewsTests(TestCase):
             'posts:group_list', kwargs={'slug': other_group.slug}))
         self.assertNotContains(response, 'new post')
 
-    # def test_index_cache(self):
-    #     self.client.get(reverse('posts:index'))
-    #     self.assertTrue(cache.get('index_page'))
-    #     cache.clear()
-    #     self.client.get(reverse('posts:index'))
-    #     self.assertFalse(cache.get('index_page'))
+
+class PostIndexTestCache(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='username')
+        self.group = Group.objects.create(
+            title='Test_group',
+            slug='Test-group',
+            description='Test-group-description'
+        )
+        self.post = Post.objects.create(
+            author=self.user,
+            text='Test_Text',
+            group=self.group
+        )
+
+    def test_displayed_posts(self):
+        '''Отображение тестовых сообщений из кэша.'''
+        response = self.client.get(reverse('posts:index'))
+        self.assertContains(
+            response, self.post.text, status_code=HTTPStatus.OK)
+        Post.objects.all().delete()
+        response2 = self.client.get(reverse('posts:index'))
+        self.assertContains(
+            response2, self.post.text, status_code=HTTPStatus.OK)
+        cache.clear()
+        response3 = self.client.get(reverse('posts:index'))
+        self.assertNotContains(
+            response3, self.post.text, status_code=HTTPStatus.OK)
 
 
 class PostCommentsTests(TestCase):

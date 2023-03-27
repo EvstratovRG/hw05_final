@@ -80,3 +80,6 @@ class Comment(CreatedModel):
 #         on_delete=models.CASCADE,
 #         related_name='following'
 #     )
+
+#     class Meta:
+#         UniqueConstaint
