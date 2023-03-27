@@ -67,3 +67,16 @@ class Comment(CreatedModel):
         max_length=100,
         validators=[validate_not_empty],
         help_text='Напишите Ваш комментарий.')
+
+
+# class Follow(models.Model):
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='follower'
+#     )
+#     author = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='following'
+#     )

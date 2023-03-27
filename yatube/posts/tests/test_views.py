@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
+from django.core.cache import cache
 
-from posts.models import Post, Group
+from posts.models import Post, Group, Comment
 from posts.forms import PostForm
 
 User = get_user_model()
@@ -147,3 +148,44 @@ class PostViewsTests(TestCase):
         response = self.guest_client.get(reverse(
             'posts:group_list', kwargs={'slug': other_group.slug}))
         self.assertNotContains(response, 'new post')
+
+    # def test_index_cache(self):
+    #     self.client.get(reverse('posts:index'))
+    #     self.assertTrue(cache.get('index_page'))
+    #     cache.clear()
+    #     self.client.get(reverse('posts:index'))
+    #     self.assertFalse(cache.get('index_page'))
+
+
+class PostCommentsTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='comment_username')
+        cls.post = Post.objects.create(
+            author=cls.user,
+            text='test post',
+        )
+        cls.text_comment = 'test comment'
+
+    def setUp(self):
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
+
+    def test_comment_add_only_authorized(self):
+        '''Комментировать посты может только авторизованный пользователь.'''
+        text_comment = 'test Comment'
+        response = self.authorized_client.post(reverse(
+            'posts:add_comment',
+            args=[self.post.id]),
+            data={'text': text_comment},
+            follow=True
+        )
+        self.assertEqual(Comment.objects.count(), 1)
+        comment = Comment.objects.first()
+        self.assertEqual(comment.text, text_comment)
+        self.assertEqual(comment.post, self.post)
+        self.assertEqual(comment.author, self.post.author)
+        self.assertRedirects(
+            response, f'/posts/{self.post.id}/'
+        )

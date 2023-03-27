@@ -1,9 +1,9 @@
-<div class="card-body">
-    <form method="post" action="{% url 'users:password_change_form' %}">
-      {% include 'includes/errors.html' %}
-      {% csrf_token %}
-      {% include 'includes/dynamic_forms.html' %}
-        <button type="submit" class="btn btn-primary"> 
-          Изменить пароль 
-        </button>
-    </form>
+
+<form method="post" action="{% url 'users:password_change_form' %}">
+  {% include 'includes/errors.html' %}
+  {% csrf_token %}
+  {% include 'includes/dynamic_forms.html' %}
+    <button type="submit" class="btn btn-primary"> 
+      Изменить пароль 
+    </button>
+</form>
