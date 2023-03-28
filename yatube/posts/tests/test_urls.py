@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 
@@ -28,6 +29,7 @@ class PostURLTests(TestCase):
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        cache.clear()
 
     def test_guest_client_urls_HTTP_OK(self):
         templates = [
@@ -87,4 +89,3 @@ class PostURLTests(TestCase):
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
                 self.assertTemplateUsed(response, template)
-

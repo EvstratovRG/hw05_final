@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.db.models import UniqueConstraint
 
 from .validators import validate_not_empty
 
@@ -11,9 +12,9 @@ User = get_user_model()
 
 
 class Group(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=settings.MAXIMUM_FIELD_LENGTH)
     slug = models.SlugField(unique=True)
-    description = models.TextField(max_length=200)
+    description = models.TextField(max_length=settings.MAXIMUM_FIELD_LENGTH)
 
     def __str__(self):
         return self.title
@@ -63,23 +64,29 @@ class Comment(CreatedModel):
         User,
         on_delete=models.CASCADE,
         related_name='comments')
-    text = models.CharField(
-        max_length=100,
+    text = models.TextField(
+        max_length=settings.MAXIMUM_FIELD_LENGTH,
         validators=[validate_not_empty],
         help_text='Напишите Ваш комментарий.')
 
 
-# class Follow(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='follower'
-#     )
-#     author = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='following'
-#     )
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='User'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Author'
+    )
 
-#     class Meta:
-#         UniqueConstaint
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            UniqueConstraint(fields=['user', 'author'], name='unique_follow')
+        ]

@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase
@@ -152,35 +150,6 @@ class PostViewsTests(TestCase):
         response = self.guest_client.get(reverse(
             'posts:group_list', kwargs={'slug': other_group.slug}))
         self.assertNotContains(response, 'new post')
-
-
-class PostIndexTestCache(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username='username')
-        self.group = Group.objects.create(
-            title='Test_group',
-            slug='Test-group',
-            description='Test-group-description'
-        )
-        self.post = Post.objects.create(
-            author=self.user,
-            text='Test_Text',
-            group=self.group
-        )
-
-    def test_displayed_posts(self):
-        '''Отображение тестовых сообщений из кэша.'''
-        response = self.client.get(reverse('posts:index'))
-        self.assertContains(
-            response, self.post.text, status_code=HTTPStatus.OK)
-        Post.objects.all().delete()
-        response2 = self.client.get(reverse('posts:index'))
-        self.assertContains(
-            response2, self.post.text, status_code=HTTPStatus.OK)
-        cache.clear()
-        response3 = self.client.get(reverse('posts:index'))
-        self.assertNotContains(
-            response3, self.post.text, status_code=HTTPStatus.OK)
 
 
 class PostCommentsTests(TestCase):

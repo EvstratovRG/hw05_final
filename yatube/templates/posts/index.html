@@ -4,6 +4,7 @@
 
   <div class="container">
   <h1>Последние обновления на сайте</h1>
+    {% include 'posts/includes/switcher.html' %}
     {% for post in page_obj %}
       {% include 'posts/includes/post_in_page_obj.html' with show_group_link=True show_author_link=True %}
     {% endfor %}
@@ -11,6 +12,3 @@
   </div>
 
 {% endblock %}
-
-
-    {% comment %} {% include 'posts/includes/switcher.html' %} {% endcomment %}
