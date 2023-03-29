@@ -46,6 +46,13 @@ class Post(CreatedModel):
         blank=True,
         help_text='Download the image.'
     )
+    likes = models.ManyToManyField(
+        User,
+        related_name='blog_posts'
+    )
+
+    def total_post_likes(self):
+        return self.likes.count()
 
     class Meta:
         ordering = ("-pub_date",)

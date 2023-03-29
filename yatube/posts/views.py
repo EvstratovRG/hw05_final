@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
@@ -62,12 +64,14 @@ def post_detail(request, post_id):
     '''Страница просмотра поста.'''
     template = 'posts/post_detail.html'
     posts = get_object_or_404(Post, id=post_id)
+    total_likes = posts.total_post_likes()
     form = CommentForm(request.POST)
     comments = posts.comments.all()
     context = {
         'posts': posts,
         'form': form,
-        'comments': comments
+        'comments': comments,
+        'total_likes': total_likes,
     }
     return render(request, template, context)
 
@@ -154,3 +158,10 @@ def profile_unfollow(request, username):
     follow = get_object_or_404(Follow, user=request.user, author=author)
     follow.delete()
     return redirect('posts:profile', username=username)
+
+
+def like_post(request, pk):
+    '''Функция лайков, кнопка есть, но каунт пока не работает.'''
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    post.likes.add(request.user)
+    return HttpResponseRedirect(reverse('posts:post_detail', args=[str(pk)]))

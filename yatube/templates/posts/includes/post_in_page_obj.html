@@ -16,6 +16,15 @@
           <img class="card-img my-2" src="{{ im.url }}">
         {% endthumbnail %}
         <p>{{ post.text|linebreaksbr }}</p>
+        <br/><br/>
+        <hr>
+        <br/>
+        <form action="{% url 'posts:like_post' post.pk %}"
+          method="POST">
+          {% csrf_token %}
+          <button type="submit", name="post_id", value="{{ post.id }}", 
+          class="btn btn-primary btn-sm">Like</button> - {{ total_likes }} Likes
+        <form/>
         <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
     </article>
     {% if post.group and show_group_link %}
