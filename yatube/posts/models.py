@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.db.models import Q, F
 
 from .validators import validate_not_empty
 
@@ -97,8 +96,6 @@ class Follow(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],
-                name='unique_follow'),
-            models.CheckConstraint(
-                check=~Q(user=F('author')),
-                name='user_cannot_follow_himself'),
+                name='unique_author_user_following'
+            )
         ]
