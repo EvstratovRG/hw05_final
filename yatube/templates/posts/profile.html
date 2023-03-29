@@ -6,6 +6,8 @@
 <div class="container">        
   <h1>Все посты пользователя {{ author }}</h1>
   <h3>Всего постов: {{ author.posts.count }} </h3>
+  <h3>Всего подписок: {{ author.follower.count }} </h3>
+  <h3>Всего подписчиков: {{ author.following.count }} </h3>
   {% if author != user %}
     {% if following %}
       <a

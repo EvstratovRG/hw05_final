@@ -160,6 +160,7 @@ def profile_unfollow(request, username):
     return redirect('posts:profile', username=username)
 
 
+@login_required
 def like_post(request, pk):
     '''Функция лайков, кнопка есть, но каунт пока не работает.'''
     post = get_object_or_404(Post, id=request.POST.get('post_id'))

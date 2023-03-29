@@ -1,10 +1,12 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.core.cache import cache
 
-from posts.models import Post, Group, Comment
+from posts.models import Post, Group, Comment, Follow
 from posts.forms import PostForm
 
 User = get_user_model()
@@ -76,7 +78,8 @@ class PostViewsTests(TestCase):
         cls.post = Post.objects.create(
             author=cls.user,
             text='Test_Text',
-            group=cls.group)
+            group=cls.group,
+        )
 
     def setUp(self):
         self.guest_client = Client()
@@ -184,3 +187,42 @@ class PostCommentsTests(TestCase):
         self.assertRedirects(
             response, f'/posts/{self.post.id}/'
         )
+
+
+class PostFollowTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='comment_username')
+        cls.author = User.objects.create_user(username='post_author')
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_authorized_user_follow(self):
+        '''Авторизованный пользователь может подписываться на авторов.'''
+        response = self.client.post(
+            reverse('posts:profile_follow', args=[self.author.username]))
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertTrue(Follow.objects.filter(
+            user=self.user, author=self.author).exists())
+
+    def test_authorized_user_unfollow(self):
+        '''Авторизованный пользователь может отподписываться от авторов.'''
+        Follow.objects.create(user=self.user, author=self.author)
+        response = self.client.post(
+            reverse('posts:profile_unfollow', args=[self.author.username]))
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertFalse(Follow.objects.filter(
+            user=self.user, author=self.author).exists())
+
+    def test_new_post_appears_in_follower_posts(self):
+        '''Пост появляется на странице избранных авторов.'''
+        post_follow = Post.objects.create(
+            text='Пост - ты избранный!',
+            author=self.author
+        )
+        Follow.objects.create(user=self.user, author=self.author)
+        response = self.client.get(reverse('posts:follow_index'))
+        follow = response.context['page_obj']
+        self.assertIn(post_follow, follow)

@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.db.models import UniqueConstraint, CheckConstraint
 from django.db.models import Q, F
 
 from .validators import validate_not_empty
@@ -51,11 +50,11 @@ class Post(CreatedModel):
         related_name='blog_posts'
     )
 
-    def total_post_likes(self):
-        return self.likes.count()
-
     class Meta:
         ordering = ("-pub_date",)
+
+    def total_post_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return self.text[:settings.SYMBOLS_SLICE]
@@ -96,7 +95,10 @@ class Follow(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
-            UniqueConstraint(fields=['user', 'author'], name='unique_follow'),
-            CheckConstraint(check=~Q(user=F('author')),
-                            name='user_cannot_follow_himself')
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_follow'),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='user_cannot_follow_himself'),
         ]

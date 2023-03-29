@@ -42,6 +42,9 @@ class PostFormTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
+    def test_images_in_context(self):
+        """При выводе поста с картинкой изображение передаётся в context."""
+
     def test_create_valid_form_post(self):
         """Валидная форма create_post создает запись."""
         posts_count = Post.objects.count()
