@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, CheckConstraint
+from django.db.models import Q, F
 
 from .validators import validate_not_empty
 
@@ -88,5 +89,7 @@ class Follow(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
-            UniqueConstraint(fields=['user', 'author'], name='unique_follow')
+            UniqueConstraint(fields=['user', 'author'], name='unique_follow'),
+            CheckConstraint(check=~Q(user=F('author')),
+                            name='user_cannot_follow_himself')
         ]

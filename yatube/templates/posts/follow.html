@@ -6,7 +6,7 @@
     <h1>Последние обновления в Подписках</h1>
     {% include 'posts/includes/switcher.html' %}
     {% for post in page_obj %}
-      {% include 'posts/includes/following_post_page_obj.html' with show_group_link=True show_author_link=True %}
+      {% include 'posts/includes/post_in_page_obj.html' with show_group_link=True show_author_link=True %}
     {% endfor %}
     {% include 'posts/includes/paginator.html' %}
   </div>

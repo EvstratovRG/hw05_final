@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
-# from django.core.cache import cache
 from django.conf import settings
 
 from .models import Post, Group, User, Follow
@@ -48,7 +47,7 @@ def profile(request, username):
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
     following = False
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user != author:
         following = Follow.objects.filter(
             user=request.user, author=author).exists()
     context = {
@@ -131,11 +130,11 @@ def follow_index(request):
     '''Функция страницы, куда будут выведены посты авторов,
     на которых подписан текущий пользователь.'''
     template = 'posts/follow.html'
-    following = request.user.following.values_list('id', flat=True)
-    posts = Post.objects.filter(author__id__in=following)
+    posts = Post.objects.filter(author__following__user=request.user)
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
     context = {'page_obj': page_obj}
+    print(posts)
     return render(request, template, context)
 
 
@@ -143,7 +142,8 @@ def follow_index(request):
 def profile_follow(request, username):
     '''Подписька'''
     author = get_object_or_404(User, username=username)
-    Follow.objects.get_or_create(user=request.user, author=author)
+    if request.user != author:
+        Follow.objects.get_or_create(user=request.user, author=author)
     return redirect('posts:profile', username=username)
 
 
