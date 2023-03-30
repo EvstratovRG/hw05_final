@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
@@ -17,13 +16,11 @@ def index(request):
     posts = Post.objects.all()
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
-    # post_likes = {post.id: post.total_post_likes() for post in posts}
     context = {
         'page_obj': page_obj,
 
     }
     return render(request, template, context)
-        # 'post_likes': post_likes,
 
 
 def group_posts(request, slug):
