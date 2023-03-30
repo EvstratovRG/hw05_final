@@ -17,12 +17,13 @@ def index(request):
     posts = Post.objects.all()
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
-    post_likes = [post.total_post_likes() for post in page_obj]
+    # post_likes = {post.id: post.total_post_likes() for post in posts}
     context = {
         'page_obj': page_obj,
-        'post_likes': post_likes,
+
     }
     return render(request, template, context)
+        # 'post_likes': post_likes,
 
 
 def group_posts(request, slug):
@@ -159,7 +160,9 @@ def profile_unfollow(request, username):
 
 @login_required
 def like_post(request, pk):
-    '''Функция лайков, кнопка есть, но каунт пока не работает.'''
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    post.likes.add(request.user)
-    return HttpResponseRedirect(reverse('posts:post_detail', args=[str(pk)]))
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

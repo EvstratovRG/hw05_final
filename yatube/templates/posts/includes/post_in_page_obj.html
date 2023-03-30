@@ -20,7 +20,8 @@
         <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
         <form method="POST" action="{% url 'posts:like_post' pk=post.pk %}">
           {% csrf_token %}
-          <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary btn-sm">Мне нравится</button>
+          <button type="submit" name="post_id" value="{{ post.id }}"
+          class="btn btn-primary btn-sm">Мне нравится {{ post.total_post_likes }}</button>
         </form>
     </article>
     {% if post.group and show_group_link %}

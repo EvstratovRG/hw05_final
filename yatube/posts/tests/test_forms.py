@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from ..models import Post, Group, User
+from ..models import Post, Group, User, Comment
 
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -140,4 +140,68 @@ class PostFormTests(TestCase):
             response, f"/auth/login/?next=/posts/{post.id}/edit/")
         self.assertNotEqual(Post.objects.count(), posts_count)
         self.assertFalse(Post.objects.filter(text=form_data['text']).exists())
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
+class CommentFormTests(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.author = User.objects.create(username='comment-username')
+        cls.comment = Post.objects.create(
+            author=cls.author,
+            text='create comment',
+        )
+        cls.post = Post.objects.create(
+            author=cls.author,
+            text='Test post',
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+
+    def setUp(self):
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.author)
+
+    def test_create_valid_comment_form(self):
+        """Валидная форма add_comment создает комментарий."""
+        comment_count = Comment.objects.count()
+        form_data = {
+            'text': self.comment.text,
+        }
+        response = self.authorized_client.post(reverse(
+            'posts:add_comment',
+            args=[self.comment.id]),
+            data=form_data,
+            follow=True
+        )
+        self.assertEqual(Comment.objects.count(), comment_count + 1)
+        self.assertTrue(
+            Comment.objects.filter(
+                text=form_data['text'],
+            ).exists()
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_create_comment_unauthorized(self):
+        """Неавторизованный пользователь не может создать комментарий."""
+        self.authorized_client.logout()
+        comment_count = Comment.objects.count()
+        form_data = {"text": self.comment.text}
+        response = self.authorized_client.post(
+            reverse("posts:add_comment", args=[self.comment.id]),
+            data=form_data,
+            follow=True
+        )
+        self.assertRedirects(
+            response, f'/auth/login/?next=/posts/{self.comment.id}/comment/'
+        )
+        self.assertEqual(Comment.objects.count(), comment_count)
+        self.assertFalse(Comment.objects.filter(
+            text=form_data["text"]).exists()
+        )
         self.assertEqual(response.status_code, HTTPStatus.OK)
