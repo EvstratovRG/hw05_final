@@ -63,7 +63,7 @@ def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     posts = get_object_or_404(Post, id=post_id)
     total_likes = posts.total_post_likes()
-    form = CommentForm(request.POST)
+    form = CommentForm()
     comments = posts.comments.all()
     context = {
         'posts': posts,
@@ -136,7 +136,6 @@ def follow_index(request):
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
     context = {'page_obj': page_obj}
-    print(posts)
     return render(request, template, context)
 
 

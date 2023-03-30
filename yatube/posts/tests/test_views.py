@@ -27,7 +27,13 @@ class PaginatorViewsTest(TestCase):
             slug='Test-group',
             description='Test-group-description',
         )
-        cls.post = Post.objects.bulk_create(
+        cls.paginate_pages = [
+            "/",
+            f"/group/{cls.group.slug}/",
+            f"/profile/{cls.user}/"
+        ]
+
+        Post.objects.bulk_create(
             [Post(author=cls.user,
                   text=f'Test Text {i}',
                   group=cls.group,
@@ -40,24 +46,14 @@ class PaginatorViewsTest(TestCase):
         cache.clear()
 
     def test_first_page_posts(self):
-        paginate_pages = [
-            "/",
-            f"/group/{self.group.slug}/",
-            f"/profile/{self.user}/",
-        ]
-        for url in paginate_pages:
+        for url in self.paginate_pages:
             with self.subTest(url):
                 response = self.client.get(url)
                 self.assertEqual(len(
                     response.context['page_obj']), settings.POSTS_QUANTITY)
 
     def test_second_page_posts(self):
-        paginate_pages = [
-            "/",
-            f"/group/{self.group.slug}/",
-            f"/profile/{self.user}/",
-        ]
-        for url in paginate_pages:
+        for url in self.paginate_pages:
             with self.subTest(url):
                 response = self.client.get(f"{url}?page=2")
                 self.assertEqual(len(
@@ -171,7 +167,7 @@ class PostCommentsTests(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_comment_add_only_authorized(self):
-        '''Комментировать посты может только авторизованный пользователь.'''
+        '''Пользователь может комментировать.'''
         text_comment = 'test Comment'
         response = self.authorized_client.post(reverse(
             'posts:add_comment',

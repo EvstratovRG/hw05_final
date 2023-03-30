@@ -75,6 +75,9 @@ class Comment(CreatedModel):
         validators=[validate_not_empty],
         help_text='Напишите Ваш комментарий.')
 
+    def __str__(self):
+        return self.text
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -89,6 +92,9 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Author'
     )
+
+    def __str__(self):
+        return f'{self.user} follows {self.author}'
 
     class Meta:
         verbose_name = 'Подписка'

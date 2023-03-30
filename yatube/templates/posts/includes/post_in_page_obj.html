@@ -16,7 +16,7 @@
           <img class="card-img my-2" src="{{ im.url }}">
         {% endthumbnail %}
         <hr>
-        <p>{{ post.text|linebreaksbr }}</p>
+        <p>Текст поста: {{ post.text|linebreaksbr }}</p>
         <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
         <form method="POST" action="{% url 'posts:like_post' pk=post.pk %}">
           {% csrf_token %}
