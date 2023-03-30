@@ -14,15 +14,13 @@ from yatube.utils import paginate_posts
 def index(request):
     '''Главная страница'''
     template = 'posts/index.html'
-    # posts = cache.get('index_page')
     posts = Post.objects.all()
-    # if not posts:
-    #     posts = Post.objects.all()
-    #     cache.set('index_page', posts)
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
+    post_likes = [post.total_post_likes() for post in page_obj]
     context = {
         'page_obj': page_obj,
+        'post_likes': post_likes,
     }
     return render(request, template, context)
 

@@ -17,7 +17,11 @@
         {% endthumbnail %}
         <hr>
         <p>{{ post.text|linebreaksbr }}</p>
-        <a href="{% url 'posts:post_detail' post.id %}">подробная информация {{ total_likes }}</a>
+        <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
+        <form method="POST" action="{% url 'posts:like_post' pk=post.pk %}">
+          {% csrf_token %}
+          <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary btn-sm">Мне нравится</button>
+        </form>
     </article>
     {% if post.group and show_group_link %}
       <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
