@@ -1,32 +1,32 @@
 {% load static %}
 {% with request.resolver_match.view_name as view_name %}
-  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+  <nav class="navbar navbar-light" style="background-color: LightSalmon ">
     <div class="container">
       <a class="navbar-brand" href="{% url 'posts:index' %}">
         <img src="{% static 'img/logo.png' %}" width="30" height="30" 
         class="d-inline-block align-top" alt="">
-        <span style="color:red">Ya</span>tube
+        <span style="color:white">Pandas</span>blog
       </a>
       <ul class="nav nav-pills">
         <li class="nav-item">              
-          <a class="nav-link {% if view_name == 'about:author' %}activate{% endif %}"href="{% url 'about:author' %}">Об авторе</a>
+          <a class="nav-link {% if view_name == 'about:author' %}activate{% endif %}"href="{% url 'about:author' %}"><b>Об авторе</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view_name == 'about:tech' %}activate{% endif %}"href="{% url 'about:tech' %}">Технологии</a>
+          <a class="nav-link {% if view_name == 'about:tech' %}activate{% endif %}"href="{% url 'about:tech' %}"><b>Технологии</b></a>
         </li>
         {% if request.user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'posts:post_create' %}">Новая запись</a>
+          <a class="nav-link" href="{% url 'posts:post_create' %}"><b>Новая запись</b></a>
         </li>
         <li class="nav-item"> 
-          <a class="nav-link link-light " href="{% url 'users:password_change_form' %}">Изменить пароль</a>
+          <a class="nav-link link-light " href="{% url 'users:password_change_form' %}"><b>Изменить пароль</b></a>
         </li>
         <li class="nav-item"> 
-          <a class="nav-link link-light" href="{% url 'users:logout' %}">Выйти</a>
+          <a class="nav-link link-light" href="{% url 'users:logout' %}"><b>Выйти</b></a>
         </li>
         <li>
-          <a> {{ user.username }} </a>
-        <li>
+          <a class="nav-link link-light" href="{% url 'posts:profile' user.username %}"><b>{{ user.username }} - пользователь<b></a>
+        </li>
         {% else %}
         <li class="nav-item"> 
           <a class="nav-link link-light" href="{% url 'users:login' %}">Войти</a>
