@@ -14,11 +14,12 @@ def index(request):
     '''Главная страница'''
     template = 'posts/index.html'
     posts = Post.objects.all()
+    groups = Group.objects.all()
     page_number = request.GET.get('page')
     page_obj = paginate_posts(posts, page_number)
     context = {
         'page_obj': page_obj,
-
+        'groups': groups,
     }
     return render(request, template, context)
 

@@ -8,6 +8,7 @@
   <h3>Постов: {{ author.posts.count }} </h3>
   <h3>подписок: {{ author.follower.count }} </h3>
   <h3>подписчиков: {{ author.following.count }} </h3>
+  {% include 'posts/includes/paginator.html' %}
   {% if author != user %}
     {% if following %}
       <a
@@ -29,6 +30,7 @@
       {% include 'posts/includes/post_in_page_obj.html' with show_group_link=True %}
     {% endfor %}
     {% include 'posts/includes/paginator.html' %}
+    {% include 'posts/includes/up.html' %}
   
 </div>
 
