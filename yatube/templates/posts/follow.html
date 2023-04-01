@@ -4,7 +4,7 @@
 
   <div class="container">
     <h1>Последние обновления в Подписках</h1>
-    {% include 'posts/includes/switcher.html' with page_flag='follow' %}
+    {% include 'posts/includes/switcher.html' with page_obj='follow' %}
     {% include 'posts/includes/paginator.html' %}
     {% for post in page_obj %}
       {% include 'posts/includes/post_in_page_obj.html' with show_group_link=True show_author_link=True %}

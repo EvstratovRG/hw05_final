@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
   <h1>Последние обновления на сайте</h1>
-    {% include 'posts/includes/switcher.html' with page_flag='index.html' %}
+    {% include 'posts/includes/switcher.html' with page_obj='index' %}
     {% include 'posts/includes/paginator.html' %}
     <div>
       <a>Выберите группу для просмотра постов:
